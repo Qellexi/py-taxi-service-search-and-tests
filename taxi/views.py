@@ -8,7 +8,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.views import generic
 
-from taxi.forms import DriverForm, CarForm, LicenseForm
+from taxi.forms import DriverForm, CarForm, DriverLicenseUpdateForm
 from taxi.models import Driver, Manufacturer, Car, Customer
 
 
@@ -123,7 +123,7 @@ class ManufacturerDeleteView(LoginRequiredMixin, generic.DeleteView):
 class DriverCreateView(LoginRequiredMixin, generic.CreateView):
     model = Driver
     form_class = DriverForm
-    second_form_class = LicenseForm
+    second_form_class = DriverLicenseUpdateForm
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -135,13 +135,13 @@ class DriverCreateView(LoginRequiredMixin, generic.CreateView):
 
 class DriverLicenseUpdateView(LoginRequiredMixin, generic.UpdateView):
     model = Driver
-    form_class = LicenseForm
+    form_class = DriverLicenseUpdateForm
 
 
 class DriverUpdateView(LoginRequiredMixin, generic.UpdateView):
     model = Driver
     form_class = DriverForm
-    second_form_class = LicenseForm
+    second_form_class = DriverLicenseUpdateForm
 
 
 class DriverDeleteView(LoginRequiredMixin, generic.DeleteView):
