@@ -25,7 +25,10 @@ class Migration(migrations.Migration):
                 ),
                 ("full_name", models.CharField(max_length=255)),
                 ("birth_year", models.IntegerField()),
-                ("hobby", models.CharField(blank=True, max_length=255, null=True)),
+                (
+                    "hobby",
+                    models.CharField(blank=True, max_length=255, null=True),
+                ),
             ],
             options={
                 "verbose_name_plural": "customers",
@@ -47,7 +50,8 @@ class Migration(migrations.Migration):
             model_name="car",
             name="manufacturer",
             field=models.ForeignKey(
-                on_delete=django.db.models.deletion.CASCADE, to="taxi.manufacturer"
+                on_delete=django.db.models.deletion.CASCADE,
+                to="taxi.manufacturer",
             ),
         ),
         migrations.AlterField(
