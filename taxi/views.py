@@ -9,7 +9,9 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.views import generic
 
-from taxi.forms import CarForm, DriverCreationForm
+from taxi.forms import (CarForm,
+                        DriverCreationForm,
+                        DriverLicenseUpdateForm)
 from taxi.models import Manufacturer, Car, Customer
 
 
@@ -130,7 +132,7 @@ class DriverCreateView(LoginRequiredMixin, generic.CreateView):
 
 class DriverLicenseUpdateView(LoginRequiredMixin, generic.UpdateView):
     model = Driver
-    form_class = DriverCreationForm
+    form_class = DriverLicenseUpdateForm
 
 
 class DriverUpdateView(LoginRequiredMixin, generic.UpdateView):

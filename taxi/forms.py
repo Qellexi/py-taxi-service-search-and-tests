@@ -29,6 +29,18 @@ class DriverCreationForm(UserCreationForm):
         )
 
 
+class DriverLicenseUpdateForm(forms.ModelForm):
+    license_number = forms.CharField(
+        max_length=8,
+        validators=[custom_code_validator],
+        help_text="Format: ABC12345",
+    )
+
+    class Meta:
+        model = get_user_model()
+        fields = ["license_number"]
+
+
 class CarForm(forms.ModelForm):
     drivers = forms.ModelMultipleChoiceField(
         queryset=get_user_model().objects.all(),
