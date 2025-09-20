@@ -1,5 +1,6 @@
 from http.client import HTTPResponse
 
+from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Prefetch
@@ -8,11 +9,13 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.views import generic
 
-from taxi.forms import DriverForm, CarForm, DriverLicenseUpdateForm
+from taxi.forms import CarForm, DriverCreationForm
 from taxi.models import Driver, Manufacturer, Car, Customer
 
 
-# Create your views here.
+Driver = get_user_model()
+
+
 @login_required
 def index(request):
     num_drivers = Driver.objects.all().count()
@@ -41,9 +44,7 @@ class CarListView(LoginRequiredMixin, generic.ListView):
     model = Car
     template_name = "taxi/car_list.html"
     context_object_name = "car_list"
-    queryset = Car.objects.select_related("manufacturer").order_by(
-        "manufacturer__name"
-    )
+    queryset = Car.objects.select_related("manufacturer").order_by("manufacturer__name")
     paginate_by = 5
 
 
@@ -122,26 +123,17 @@ class ManufacturerDeleteView(LoginRequiredMixin, generic.DeleteView):
 
 class DriverCreateView(LoginRequiredMixin, generic.CreateView):
     model = Driver
-    form_class = DriverForm
-    second_form_class = DriverLicenseUpdateForm
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["second_form"] = self.second_form_class(
-            self.request.POST or None
-        )
-        return context
+    form_class = DriverCreationForm
 
 
 class DriverLicenseUpdateView(LoginRequiredMixin, generic.UpdateView):
     model = Driver
-    form_class = DriverLicenseUpdateForm
+    form_class = DriverCreationForm
 
 
 class DriverUpdateView(LoginRequiredMixin, generic.UpdateView):
     model = Driver
-    form_class = DriverForm
-    second_form_class = DriverLicenseUpdateForm
+    form_class = DriverCreationForm
 
 
 class DriverDeleteView(LoginRequiredMixin, generic.DeleteView):
@@ -158,7 +150,7 @@ def assign_to_car(request, pk):
     if user not in car.drivers.all():
         car.drivers.add(user)
 
-    return redirect("taxi:car-detail", pk=user.id)
+    return redirect("taxi:car-detail", pk=car.pk)
 
 
 def delete_assign_to_car(request, pk):
@@ -168,4 +160,4 @@ def delete_assign_to_car(request, pk):
     if user in car.drivers.all():
         car.drivers.remove(user)
 
-    return redirect("taxi:car-detail", pk=user.id)
+    return redirect("taxi:car-detail", pk=car.pk)
