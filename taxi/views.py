@@ -10,7 +10,7 @@ from django.urls import reverse, reverse_lazy
 from django.views import generic
 
 from taxi.forms import CarForm, DriverCreationForm
-from taxi.models import Driver, Manufacturer, Car, Customer
+from taxi.models import Manufacturer, Car, Customer
 
 
 Driver = get_user_model()
