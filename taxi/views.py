@@ -44,7 +44,9 @@ class CarListView(LoginRequiredMixin, generic.ListView):
     model = Car
     template_name = "taxi/car_list.html"
     context_object_name = "car_list"
-    queryset = Car.objects.select_related("manufacturer").order_by("manufacturer__name")
+    queryset = Car.objects.select_related("manufacturer").order_by(
+        "manufacturer__name"
+    )
     paginate_by = 5
 
 

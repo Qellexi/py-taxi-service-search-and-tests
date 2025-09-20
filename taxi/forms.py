@@ -7,7 +7,8 @@ from taxi.models import Driver, Car
 
 custom_code_validator = RegexValidator(
     regex=r"^[A-Z]{3}[0-9]{5}$",
-    message="Enter exactly 8 characters: " "3 uppercase letters followed by 5 digits.",
+    message="Enter exactly 8 characters: "
+    "3 uppercase letters followed by 5 digits.",
     code="invalid_code",
 )
 
