@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <h1>Driver List</h1>
+  <h1>Driver List <a style="float: right" href="{% url 'taxi:driver-create' %}">+</a></h1>
 
   {% if driver_list %}
     <table border="1" cellpadding="5" cellspacing="0">

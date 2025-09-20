@@ -6,7 +6,15 @@
   <p><strong>Country: </strong>{{ car.manufacturer.country }}</p>
 
   <div class="ml-3">
-    <h3>Drivers:</h3>
+    <h3>Drivers:{% if user in car.drivers.all %}
+      <a style="float: right" class="btn btn-danger btn-sm" href="{% url 'taxi:car-delete-assign' pk=car.id %}">
+        Delete me from this car
+      </a>
+    {% else %}
+      <a style="float: right" class="btn btn-primary btn-sm" href="{% url 'taxi:car-assign' pk=car.id %}">
+        Assign me to this car
+      </a>
+    {% endif %}</h3>
     {% for driver in car.drivers.all %}
       <hr>
       <p class="text-muted">{{ driver.id }}</p>
@@ -17,7 +25,7 @@
   </div>
 
   <div class="mt-3">
-    <a href="{% url 'taxi:car-update' car.pk %}" class="btn btn-primary">Update Car</a>
-    <a href="{% url 'taxi:car-delete' car.pk %}" class="btn btn-danger">Delete Car</a>
+    <a class="btn btn-secondary btn-sm" href="{% url 'taxi:car-update' car.pk %}">Update</a>
+    <a class="btn btn-danger btn-sm" href="{% url 'taxi:car-delete' car.pk %}">Delete</a>
   </div>
 {% endblock %}

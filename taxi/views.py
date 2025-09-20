@@ -4,10 +4,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Prefetch
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.views import generic
 
+from taxi.forms import DriverForm, CarForm, LicenseForm
 from taxi.models import Driver, Manufacturer, Car, Customer
 
 
@@ -40,8 +41,7 @@ class CarListView(LoginRequiredMixin, generic.ListView):
     model = Car
     template_name = "taxi/car_list.html"
     context_object_name = "car_list"
-    queryset = (Car.objects.select_related("manufacturer").
-                order_by("manufacturer__name"))
+    queryset = Car.objects.select_related("manufacturer").order_by("manufacturer__name")
     paginate_by = 5
 
 
@@ -62,9 +62,7 @@ class DriverDetailView(LoginRequiredMixin, generic.DetailView):
 
 
 def test_session_view(request: HttpRequest) -> HttpResponse:
-    return HttpResponse(
-        "<h1>Test Session</h1>"
-    )
+    return HttpResponse("<h1>Test Session</h1>")
 
 
 class CustomerCreateView(LoginRequiredMixin, generic.CreateView):
@@ -82,9 +80,7 @@ class CustomerListView(LoginRequiredMixin, generic.ListView):
 
 class CarCreateView(LoginRequiredMixin, generic.CreateView):
     model = Car
-    fields = "__all__"
-    success_url = reverse_lazy("taxi:car-list")
-    template_name = "taxi/car_form.html"
+    form_class = CarForm
 
 
 class CarUpdateView(LoginRequiredMixin, generic.UpdateView):
@@ -120,3 +116,52 @@ class ManufacturerDeleteView(LoginRequiredMixin, generic.DeleteView):
     fields = "__all__"
     success_url = reverse_lazy("taxi:manufacturer-list")
     template_name = "taxi/manufacturer_confirm_delete.html"
+
+
+class DriverCreateView(LoginRequiredMixin, generic.CreateView):
+    model = Driver
+    form_class = DriverForm
+    second_form_class = LicenseForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["second_form"] = self.second_form_class(self.request.POST or None)
+        return context
+
+
+class DriverLicenseUpdateView(LoginRequiredMixin, generic.UpdateView):
+    model = Driver
+    form_class = LicenseForm
+
+
+class DriverUpdateView(LoginRequiredMixin, generic.UpdateView):
+    model = Driver
+    form_class = DriverForm
+    second_form_class = LicenseForm
+
+
+class DriverDeleteView(LoginRequiredMixin, generic.DeleteView):
+    model = Driver
+    success_url = reverse_lazy("taxi:driver-list")
+    template_name = "taxi/driver_confirm_delete.html"
+
+
+@login_required
+def assign_to_car(request, pk):
+    car = get_object_or_404(Car, pk=pk)
+    user = request.user
+
+    if user not in car.drivers.all():
+        car.drivers.add(user)
+
+    return redirect("taxi:car-detail", pk=user.id)
+
+
+def delete_assign_to_car(request, pk):
+    car = get_object_or_404(Car, pk=pk)
+    user = request.user
+
+    if user in car.drivers.all():
+        car.drivers.remove(user)
+
+    return redirect("taxi:car-detail", pk=user.id)

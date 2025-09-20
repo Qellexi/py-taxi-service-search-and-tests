@@ -31,19 +31,18 @@ class Driver(AbstractUser):
 
 class Car(models.Model):
     manufacturer = models.ForeignKey(Manufacturer, on_delete=models.CASCADE)
-    drivers = models.ManyToManyField(
-        settings.AUTH_USER_MODEL,
-        related_name="cars"
-    )
+    drivers = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="cars")
     model = models.CharField(max_length=255)
 
     class Meta:
         ordering = ("manufacturer", "model")
 
     def __str__(self):
-        return (f"{self.manufacturer.name} "
-                f"{self.manufacturer.country}: "
-                f"{self.model}")
+        return (
+            f"{self.manufacturer.name} "
+            f"{self.manufacturer.country}: "
+            f"{self.model}"
+        )
 
     def get_absolute_url(self):
         return reverse("taxi:car-detail", kwargs={"pk": self.pk})
