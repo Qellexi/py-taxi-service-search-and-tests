@@ -36,8 +36,9 @@ custom_code_validator = RegexValidator(
 
 class LicenseForm(forms.ModelForm):
     license_number = forms.CharField(
-        max_length=8, validators=[custom_code_validator], help_text="Format: ABC12345"
-    )
+        max_length=8,
+        validators=[custom_code_validator],
+        help_text="Format: ABC12345")
 
     class Meta:
         model = Driver
