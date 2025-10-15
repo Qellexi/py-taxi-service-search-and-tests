@@ -58,8 +58,8 @@ class DriverSearchForm(forms.Form):
     full_info = forms.CharField(
         max_length=255,
         required=False,
-        label="Full Name",
-        widget=forms.TextInput(attrs={"placeholder": "Search by Full Name"}),
+        label="Username",
+        widget=forms.TextInput(attrs={"placeholder": "Search by username"}),
     )
 
 

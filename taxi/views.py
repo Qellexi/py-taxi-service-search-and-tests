@@ -48,10 +48,10 @@ class ManufacturerListView(LoginRequiredMixin, generic.ListView):
 
     def get_context_data(self, **kwargs):
         context = super(ManufacturerListView, self).get_context_data(**kwargs)
-        info = self.request.GET.get("info", "")
-        context["info"] = info
+        name = self.request.GET.get("name", "")
+        context["info"] = name
         context["search_form"] = ManufacturerSearchForm(
-            initial={"info": info},
+            initial={"name": name},
         )
         return context
 
@@ -59,19 +59,22 @@ class ManufacturerListView(LoginRequiredMixin, generic.ListView):
         queryset = Manufacturer.objects.all()
         form = ManufacturerSearchForm(self.request.GET)
         if form.is_valid():
-            info = form.cleaned_data.get("info", "").strip()
-            if info:
-                parts = info.split()
-                if len(parts) == 1:
-                    return queryset.filter(
-                        Q(name__icontains=parts[0])
-                        | Q(country__icontains=parts[0])
-                    )
-                if len(parts) >= 2:
-                    return queryset.filter(
-                        Q(name__icontains=parts[0])
-                        & Q(country__icontains=parts[1])
-                    )
+            name = form.cleaned_data["name"]
+            if name:
+                return queryset.filter(name__icontains=name)
+            # info = form.cleaned_data.get("info", "").strip()
+            # if info:
+            #     parts = info.split()
+            #     if len(parts) == 1:
+            #         return queryset.filter(
+            #             Q(name__icontains=parts[0])
+            #             | Q(country__icontains=parts[0])
+            #         )
+            #     if len(parts) >= 2:
+            #         return queryset.filter(
+            #             Q(name__icontains=parts[0])
+            #             & Q(country__icontains=parts[1])
+            #         )
 
         return queryset
 
@@ -87,10 +90,10 @@ class CarListView(LoginRequiredMixin, generic.ListView):
 
     def get_context_data(self, **kwargs):
         context = super(CarListView, self).get_context_data(**kwargs)
-        info = self.request.GET.get("info", "")
-        context["info"] = info
+        model = self.request.GET.get("model", "")
+        context["model"] = model
         context["search_form"] = CarSearchForm(
-            initial={"info": info},
+            initial={"model": model},
         )
         return context
 
@@ -98,19 +101,9 @@ class CarListView(LoginRequiredMixin, generic.ListView):
         queryset = Car.objects.select_related("manufacturer")
         form = CarSearchForm(self.request.GET)
         if form.is_valid():
-            info = form.cleaned_data.get("info", "").strip()
-            if info:
-                parts = info.split()
-                if len(parts) == 1:
-                    return queryset.filter(
-                        Q(model__icontains=parts[0])
-                        | Q(manufacturer__icontains=parts[0])
-                    )
-                if len(parts) >= 2:
-                    return queryset.filter(
-                        Q(model__icontains=parts[0])
-                        & Q(manufacturer__icontains=parts[1])
-                    )
+            model = form.cleaned_data.get("model", "").strip()
+            if model:
+                return queryset.filter(model__icontains=model)
 
         return queryset
 
@@ -127,10 +120,10 @@ class DriverListView(LoginRequiredMixin, generic.ListView):
 
     def get_context_data(self, **kwargs):
         context = super(DriverListView, self).get_context_data(**kwargs)
-        full_name = self.request.GET.get("full_name", "")
-        context["full_name"] = full_name
+        username = self.request.GET.get("username", "")
+        context["username"] = username
         context["search_form"] = DriverSearchForm(
-            initial={"full_name": full_name},
+            initial={"username": username},
         )
         return context
 
@@ -141,21 +134,9 @@ class DriverListView(LoginRequiredMixin, generic.ListView):
         print("FORM IS VALID:", form.is_valid())
         print("FORM ERRORS:", form.errors)
         if form.is_valid():
-            full_info = form.cleaned_data.get("full_info", "").strip()
-            if full_info:
-                parts = full_info.split()
-                if len(parts) == 1:
-                    return queryset.filter(
-                        Q(first_name__icontains=parts[0])
-                        | Q(last_name__icontains=parts[0])
-                        | Q(license_number__icontains=parts[0])
-                    )
-                if len(parts) >= 3:
-                    return queryset.filter(
-                        Q(first_name__icontains=parts[0])
-                        & Q(last_name__icontains=parts[1])
-                        & Q(license_number__icontains=parts[2])
-                    )
+            username = form.cleaned_data.get("username", "").strip()
+            if username:
+                return queryset.filter(username__icontains=username)
 
         return queryset
 
