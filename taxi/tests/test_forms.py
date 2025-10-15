@@ -39,9 +39,15 @@ class DriverFormTests(TestCase):
         form = DriverCreationForm(data=form_data)
         self.assertTrue(form.is_valid())
         self.assertEqual(form.cleaned_data["username"], form_data["username"])
-        self.assertEqual(form.cleaned_data["license_number"], form_data["license_number"])
-        self.assertEqual(form.cleaned_data["first_name"], form_data["first_name"])
-        self.assertEqual(form.cleaned_data["last_name"], form_data["last_name"])
+        self.assertEqual(
+            form.cleaned_data["license_number"],
+            form_data["license_number"])
+        self.assertEqual(
+            form.cleaned_data["first_name"],
+            form_data["first_name"])
+        self.assertEqual(
+            form.cleaned_data["last_name"],
+            form_data["last_name"])
 
     """
         Testing a search form in Django typically involves checking that:
@@ -49,6 +55,7 @@ class DriverFormTests(TestCase):
         - Submitting the form with valid input returns expected results.
         - Submitting with invalid or empty input behaves as expected (e.g. shows all results or none).
     """
+
     def test_driver_search_form_renders(self):
         response = self.client.get(reverse("taxi:driver-list"))
         self.assertEqual(response.status_code, 200)
@@ -56,13 +63,14 @@ class DriverFormTests(TestCase):
         self.assertContains(response, 'type="submit"')
 
     def test_search_returns_results(self):
-        response = self.client.get(reverse("taxi:driver-list"), {'full_info': "tst12345"})
+        response = self.client.get(
+            reverse("taxi:driver-list"), {'full_info': "tst12345"})
         self.assertContains(response, self.user1.username)
         self.assertNotContains(response, self.user2.username)
 
-
     def test_search_empty_query_returns_all(self):
-        response = self.client.get(reverse("taxi:driver-list"), {'full_info': ""})
+        response = self.client.get(
+            reverse("taxi:driver-list"), {'full_info': ""})
         self.assertContains(response, self.user1.username)
         self.assertContains(response, self.user2.username)
 
@@ -85,9 +93,12 @@ class CarFormTests(TestCase):
         )
         self.client.force_login(self.user1)
         manufacturer = Manufacturer.objects.create(name="Tesla", country="USA")
-        self.car1 = Car.objects.create(model="Model S", manufacturer=manufacturer)
-        self.car2 = Car.objects.create(model="Model 3", manufacturer=manufacturer)
-        self.car3 = Car.objects.create(model="Civic", manufacturer=manufacturer)
+        self.car1 = Car.objects.create(
+            model="Model S", manufacturer=manufacturer)
+        self.car2 = Car.objects.create(
+            model="Model 3", manufacturer=manufacturer)
+        self.car3 = Car.objects.create(
+            model="Civic", manufacturer=manufacturer)
 
     def test_car_creation_form(self):
         manufacturer_form_data = {
@@ -115,6 +126,7 @@ class CarFormTests(TestCase):
         - Submitting the form with valid input returns expected results.
         - Submitting with invalid or empty input behaves as expected (e.g. shows all results or none).
     """
+
     def test_car_search_form_renders(self):
         response = self.client.get(reverse("taxi:car-list"))
         self.assertEqual(response.status_code, 200)
@@ -123,7 +135,8 @@ class CarFormTests(TestCase):
         self.assertContains(response, 'type="submit"')
 
     def test_search_returns_results(self):
-        response = self.client.get(reverse("taxi:car-list"), {'model': "Model"})
+        response = self.client.get(
+            reverse("taxi:car-list"), {'model': "Model"})
         self.assertEqual(response.status_code, 200)
 
         cars = response.context["car_list"]
@@ -134,7 +147,6 @@ class CarFormTests(TestCase):
         self.assertContains(response, self.car1.model)
         self.assertContains(response, self.car2.model)
         self.assertNotContains(response, self.car3.model)
-
 
     def test_search_empty_query_returns_all(self):
         response = self.client.get(reverse("taxi:car-list"), {'model': ""})
@@ -157,12 +169,15 @@ class ManufacturerFormTest(TestCase):
     def test_search_form_renders(self):
         response = self.client.get(reverse("taxi:manufacturer-list"))
         self.assertEqual(response.status_code, 200)
-        self.assertIsInstance(response.context["search_form"], ManufacturerSearchForm)
+        self.assertIsInstance(
+            response.context["search_form"],
+            ManufacturerSearchForm)
         self.assertContains(response, "<form")
         self.assertContains(response, 'type="submit"')
 
     def test_search_returns_results(self):
-        response = self.client.get(reverse("taxi:manufacturer-list"), {'name': "name1"})
+        response = self.client.get(
+            reverse("taxi:manufacturer-list"), {'name': "name1"})
         self.assertNotContains(response, self.manufacturer1.name)
         self.assertContains(response, self.manufacturer2.name)
 

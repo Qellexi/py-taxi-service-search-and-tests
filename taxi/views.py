@@ -9,9 +9,13 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.views import generic
 
-from taxi.forms import (CarForm,
-                        DriverCreationForm,
-                        DriverLicenseUpdateForm, DriverSearchForm, ManufacturerSearchForm, CarSearchForm)
+from taxi.forms import (
+    CarForm,
+    DriverCreationForm,
+    DriverLicenseUpdateForm,
+    DriverSearchForm,
+    ManufacturerSearchForm,
+    CarSearchForm)
 from taxi.models import Manufacturer, Car, Customer
 
 
@@ -59,16 +63,17 @@ class ManufacturerListView(LoginRequiredMixin, generic.ListView):
                 parts = info.split()
                 if len(parts) == 1:
                     return queryset.filter(
-                        Q(name__icontains=parts[0]) |
-                        Q(country__icontains=parts[0])
+                        Q(name__icontains=parts[0])
+                        | Q(country__icontains=parts[0])
                     )
                 if len(parts) >= 2:
                     return queryset.filter(
-                        Q(name__icontains=parts[0]) &
-                        Q(country__icontains=parts[1])
+                        Q(name__icontains=parts[0])
+                        & Q(country__icontains=parts[1])
                     )
 
         return queryset
+
 
 class CarListView(LoginRequiredMixin, generic.ListView):
     model = Car
@@ -99,13 +104,13 @@ class CarListView(LoginRequiredMixin, generic.ListView):
                 parts = info.split()
                 if len(parts) == 1:
                     return queryset.filter(
-                        Q(model__icontains=parts[0]) |
-                        Q(manufacturer__icontains=parts[0])
+                        Q(model__icontains=parts[0])
+                        | Q(manufacturer__icontains=parts[0])
                     )
                 if len(parts) >= 2:
                     return queryset.filter(
-                        Q(model__icontains=parts[0]) &
-                        Q(manufacturer__icontains=parts[1])
+                        Q(model__icontains=parts[0])
+                        & Q(manufacturer__icontains=parts[1])
                     )
 
         return queryset
@@ -142,15 +147,15 @@ class DriverListView(LoginRequiredMixin, generic.ListView):
                 parts = full_info.split()
                 if len(parts) == 1:
                     return queryset.filter(
-                        Q(first_name__icontains=parts[0]) |
-                        Q(last_name__icontains=parts[0]) |
-                        Q(license_number__icontains=parts[0])
+                        Q(first_name__icontains=parts[0])
+                        | Q(last_name__icontains=parts[0])
+                        | Q(license_number__icontains=parts[0])
                     )
                 if len(parts) >= 3:
                     return queryset.filter(
-                        Q(first_name__icontains=parts[0]) &
-                        Q(last_name__icontains=parts[1]) &
-                        Q(license_number__icontains=parts[2])
+                        Q(first_name__icontains=parts[0])
+                        & Q(last_name__icontains=parts[1])
+                        & Q(license_number__icontains=parts[2])
                     )
 
         return queryset

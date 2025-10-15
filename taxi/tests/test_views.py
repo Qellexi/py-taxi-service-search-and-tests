@@ -20,6 +20,7 @@ TEST_MANUFACTURER_COUNTRY = "Test Country"
 TEST_CAR_MODEL = "Audi A3"
 TEST_CAR_LICENSE_PLATE = "AA1234BB"
 
+
 class PublicDriverTests(TestCase):
     def test_login_required(self):
         res = self.client.get(DRIVER_URL)
@@ -83,7 +84,7 @@ class PrivateCarViewTests(TestCase):
         self.client.force_login(self.user)
 
     def test_car_update_view(self):
-        url= reverse("taxi:car-update", args=[self.car.id])
+        url = reverse("taxi:car-update", args=[self.car.id])
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, 200)
@@ -141,7 +142,7 @@ class PrivateManufacturerViewTests(TestCase):
         self.client.force_login(self.user)
 
     def test_manufacturer_update_view(self):
-        url= reverse("taxi:manufacturer-update", args=[self.manufacturer.id])
+        url = reverse("taxi:manufacturer-update", args=[self.manufacturer.id])
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, 200)
@@ -166,7 +167,8 @@ class PrivateManufacturerViewTests(TestCase):
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "taxi/manufacturer_confirm_delete.html")
+        self.assertTemplateUsed(
+            response, "taxi/manufacturer_confirm_delete.html")
         self.assertContains(response, self.manufacturer.name)
 
     def test_manufacturer_delete_view_post(self):
@@ -175,4 +177,6 @@ class PrivateManufacturerViewTests(TestCase):
 
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, reverse("taxi:manufacturer-list"))
-        self.assertFalse(Manufacturer.objects.filter(id=self.manufacturer.id).exists())
+        self.assertFalse(
+            Manufacturer.objects.filter(
+                id=self.manufacturer.id).exists())
