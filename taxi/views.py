@@ -3,7 +3,7 @@ from http.client import HTTPResponse
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Q
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
@@ -11,7 +11,7 @@ from django.views import generic
 
 from taxi.forms import (CarForm,
                         DriverCreationForm,
-                        DriverLicenseUpdateForm)
+                        DriverLicenseUpdateForm, DriverSearchForm, ManufacturerSearchForm, CarSearchForm)
 from taxi.models import Manufacturer, Car, Customer
 
 
@@ -41,6 +41,34 @@ class ManufacturerListView(LoginRequiredMixin, generic.ListView):
     queryset = Manufacturer.objects.order_by("name")
     paginate_by = 5
 
+    def get_context_data(self, **kwargs):
+        context = super(ManufacturerListView, self).get_context_data(**kwargs)
+        info = self.request.GET.get("info", "")
+        context["info"] = info
+        context["search_form"] = ManufacturerSearchForm(
+            initial={"info": info},
+        )
+        return context
+
+    def get_queryset(self):
+        queryset = Manufacturer.objects.all()
+        form = ManufacturerSearchForm(self.request.GET)
+        if form.is_valid():
+            info = form.cleaned_data.get("info", "").strip()
+            if info:
+                parts = info.split()
+                if len(parts) == 1:
+                    return queryset.filter(
+                        Q(name__icontains=parts[0]) |
+                        Q(country__icontains=parts[0])
+                    )
+                if len(parts) >= 2:
+                    return queryset.filter(
+                        Q(name__icontains=parts[0]) &
+                        Q(country__icontains=parts[1])
+                    )
+
+        return queryset
 
 class CarListView(LoginRequiredMixin, generic.ListView):
     model = Car
@@ -50,6 +78,37 @@ class CarListView(LoginRequiredMixin, generic.ListView):
         "manufacturer__name"
     )
     paginate_by = 5
+
+    def get_context_data(self, **kwargs):
+        context = super(CarListView, self).get_context_data(**kwargs)
+        info = self.request.GET.get("info", "")
+        context["info"] = info
+        context["search_form"] = CarSearchForm(
+            initial={"info": info},
+        )
+        return context
+
+    def get_queryset(self):
+        queryset = Car.objects.select_related(
+            "manufacturer"
+        )
+        form = CarSearchForm(self.request.GET)
+        if form.is_valid():
+            info = form.cleaned_data.get("info", "").strip()
+            if info:
+                parts = info.split()
+                if len(parts) == 1:
+                    return queryset.filter(
+                        Q(model__icontains=parts[0]) |
+                        Q(manufacturer__icontains=parts[0])
+                    )
+                if len(parts) >= 2:
+                    return queryset.filter(
+                        Q(model__icontains=parts[0]) &
+                        Q(manufacturer__icontains=parts[1])
+                    )
+
+        return queryset
 
 
 class CarDetailView(LoginRequiredMixin, generic.DetailView):
@@ -61,6 +120,40 @@ class DriverListView(LoginRequiredMixin, generic.ListView):
     template_name = "taxi/driver_list.html"
     context_object_name = "driver_list"
     paginate_by = 5
+
+    def get_context_data(self, **kwargs):
+        context = super(DriverListView, self).get_context_data(**kwargs)
+        full_name = self.request.GET.get("full_name", "")
+        context["full_name"] = full_name
+        context["search_form"] = DriverSearchForm(
+            initial={"full_name": full_name},
+        )
+        return context
+
+    def get_queryset(self):
+        queryset = Driver.objects.prefetch_related("cars")
+        form = DriverSearchForm(self.request.GET)
+        print("FORM DATA:", self.request.GET)
+        print("FORM IS VALID:", form.is_valid())
+        print("FORM ERRORS:", form.errors)
+        if form.is_valid():
+            full_info = form.cleaned_data.get("full_info", "").strip()
+            if full_info:
+                parts = full_info.split()
+                if len(parts) == 1:
+                    return queryset.filter(
+                        Q(first_name__icontains=parts[0]) |
+                        Q(last_name__icontains=parts[0]) |
+                        Q(license_number__icontains=parts[0])
+                    )
+                if len(parts) >= 3:
+                    return queryset.filter(
+                        Q(first_name__icontains=parts[0]) &
+                        Q(last_name__icontains=parts[1]) &
+                        Q(license_number__icontains=parts[2])
+                    )
+
+        return queryset
 
 
 class DriverDetailView(LoginRequiredMixin, generic.DetailView):

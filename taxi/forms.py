@@ -25,7 +25,7 @@ class DriverCreationForm(UserCreationForm):
         fields = UserCreationForm.Meta.fields + (
             "first_name",
             "last_name",
-            "license_number",  # Додаємо ліцензію сюди
+            "license_number",
         )
 
 
@@ -51,3 +51,43 @@ class CarForm(forms.ModelForm):
     class Meta:
         model = Car
         fields = "__all__"
+
+
+#-----------search---------------
+class DriverSearchForm(forms.Form):
+    full_info = forms.CharField(
+        max_length=255,
+        required=False,
+        label="Full Name",
+        widget=forms.TextInput(
+            attrs={
+                "placeholder": "Search by Full Name"
+            }
+        ),
+    )
+
+
+class CarSearchForm(forms.Form):
+    info = forms.CharField(
+        max_length=255,
+        required=False,
+        label="Model",
+        widget=forms.TextInput(
+            attrs={
+                "placeholder": "Search by Model"
+            }
+        ),
+    )
+
+
+class ManufacturerSearchForm(forms.Form):
+    name = forms.CharField(
+        max_length=255,
+        required=False,
+        label="",
+        widget=forms.TextInput(
+            attrs={
+                "placeholder": "Search by Name of Manufacturer"
+            }
+        ),
+    )
