@@ -67,16 +67,14 @@ class PrivateCarViewTests(TestCase):
             password=TEST_USER_PASSWORD,
             license_number=TEST_USER_LICENSE,
             first_name=TEST_USER_FIRST_NAME,
-            last_name=TEST_USER_LAST_NAME
+            last_name=TEST_USER_LAST_NAME,
         )
         cls.manufacturer = Manufacturer.objects.create(
-            name=TEST_MANUFACTURER_NAME,
-            country=TEST_MANUFACTURER_COUNTRY
+            name=TEST_MANUFACTURER_NAME, country=TEST_MANUFACTURER_COUNTRY
         )
         cls.driver = user.objects.get(username=cls.user.username)
         cls.car = Car.objects.create(
-            model=TEST_CAR_MODEL,
-            manufacturer=cls.manufacturer
+            model=TEST_CAR_MODEL, manufacturer=cls.manufacturer
         )
         cls.car.drivers.add(cls.driver)
 
@@ -131,11 +129,10 @@ class PrivateManufacturerViewTests(TestCase):
             password=TEST_USER_PASSWORD,
             license_number=TEST_USER_LICENSE,
             first_name=TEST_USER_FIRST_NAME,
-            last_name=TEST_USER_LAST_NAME
+            last_name=TEST_USER_LAST_NAME,
         )
         cls.manufacturer = Manufacturer.objects.create(
-            name=TEST_MANUFACTURER_NAME,
-            country=TEST_MANUFACTURER_COUNTRY
+            name=TEST_MANUFACTURER_NAME, country=TEST_MANUFACTURER_COUNTRY
         )
 
     def setUp(self):
@@ -168,7 +165,8 @@ class PrivateManufacturerViewTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(
-            response, "taxi/manufacturer_confirm_delete.html")
+            response, "taxi/manufacturer_confirm_delete.html"
+        )
         self.assertContains(response, self.manufacturer.name)
 
     def test_manufacturer_delete_view_post(self):
@@ -178,5 +176,5 @@ class PrivateManufacturerViewTests(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, reverse("taxi:manufacturer-list"))
         self.assertFalse(
-            Manufacturer.objects.filter(
-                id=self.manufacturer.id).exists())
+            Manufacturer.objects.filter(id=self.manufacturer.id).exists()
+        )

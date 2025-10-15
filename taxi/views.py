@@ -15,7 +15,8 @@ from taxi.forms import (
     DriverLicenseUpdateForm,
     DriverSearchForm,
     ManufacturerSearchForm,
-    CarSearchForm)
+    CarSearchForm,
+)
 from taxi.models import Manufacturer, Car, Customer
 
 
@@ -94,9 +95,7 @@ class CarListView(LoginRequiredMixin, generic.ListView):
         return context
 
     def get_queryset(self):
-        queryset = Car.objects.select_related(
-            "manufacturer"
-        )
+        queryset = Car.objects.select_related("manufacturer")
         form = CarSearchForm(self.request.GET)
         if form.is_valid():
             info = form.cleaned_data.get("info", "").strip()
