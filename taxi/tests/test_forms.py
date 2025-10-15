@@ -59,7 +59,7 @@ class DriverFormTests(TestCase):
         Testing a search form in Django typically involves checking that:
         - The form renders correctly.
         - Submitting the form with valid input returns expected results.
-        - Submitting with invalid or empty input behaves as expected 
+        - Submitting with invalid or empty input behaves as expected
         (e.g. shows all results or none).
     """
 
@@ -133,7 +133,7 @@ class CarFormTests(TestCase):
         Testing a search form in Django typically involves checking that:
         - The form renders correctly.
         - Submitting the form with valid input returns expected results.
-        - Submitting with invalid or empty input behaves as expected 
+        - Submitting with invalid or empty input behaves as expected
         (e.g. shows all results or none).
     """
 
