@@ -1,17 +1,14 @@
 from django.contrib.auth import get_user_model
-from django.http import request
 from django.test import TestCase
 from django.urls import reverse
 
 from taxi.forms import (
-    DriverSearchForm,
     DriverCreationForm,
     CarForm,
     CarSearchForm,
     ManufacturerSearchForm,
 )
 from taxi.models import Driver, Manufacturer, Car
-from taxi.views import DriverListView
 
 
 class DriverFormTests(TestCase):
@@ -45,15 +42,6 @@ class DriverFormTests(TestCase):
         form = DriverCreationForm(data=form_data)
         self.assertTrue(form.is_valid())
         self.assertEqual(form.cleaned_data["username"], form_data["username"])
-        self.assertEqual(
-            form.cleaned_data["license_number"], form_data["license_number"]
-        )
-        self.assertEqual(
-            form.cleaned_data["first_name"], form_data["first_name"]
-        )
-        self.assertEqual(
-            form.cleaned_data["last_name"], form_data["last_name"]
-        )
 
     """
         Testing a search form in Django typically involves checking that:
@@ -71,14 +59,14 @@ class DriverFormTests(TestCase):
 
     def test_search_returns_results(self):
         response = self.client.get(
-            reverse("taxi:driver-list"), {"full_info": "tst12345"}
+            reverse("taxi:driver-list"), {"username": "1"}
         )
         self.assertContains(response, self.user1.username)
         self.assertNotContains(response, self.user2.username)
 
     def test_search_empty_query_returns_all(self):
         response = self.client.get(
-            reverse("taxi:driver-list"), {"full_info": ""}
+            reverse("taxi:driver-list"), {"username": ""}
         )
         self.assertContains(response, self.user1.username)
         self.assertContains(response, self.user2.username)

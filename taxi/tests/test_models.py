@@ -1,11 +1,13 @@
 from django.test import TestCase
 
 from taxi.models import Driver, Car, Manufacturer
-
+from django.contrib.auth import get_user_model
 
 class ModelTests(TestCase):
     def test_driver_str(self):
-        driver = Driver.objects.create(
+        User = get_user_model()
+        driver = User.objects.create(
+            username="test_driver",
             license_number="TST12345",
             first_name="<NAME>",
             last_name="<SURNAME>",
